@@ -8,14 +8,16 @@
  * @author Thiago Azevedo
  * @author Thiago Almeida
  * 
- * Exercício 03 - Algoritmos de Alocação
+ * Exercício 03 - FirstFit de Alocação
  */
 package br.com.unifacisa.so.aplicacao;
 
 import java.util.Scanner;
 
-import br.com.unifacisa.so.entidades.algoritmos.Algoritmos;
-import br.com.unifacisa.so.entidades.enums.AlocacaoEnums;
+import br.com.unifacisa.so.entidades.algoritmos.BestFit;
+import br.com.unifacisa.so.entidades.algoritmos.FirstFit;
+import br.com.unifacisa.so.entidades.algoritmos.NextFit;
+import br.com.unifacisa.so.entidades.algoritmos.WorstFit;
 
 public class Aplicacao {
 
@@ -38,22 +40,22 @@ public class Aplicacao {
         	switch (opcao) {
 			case "1":
 				System.out.println("Opcao escolhida: Alocação First Fit...\n");
-				Algoritmos.executar(AlocacaoEnums.FIRST_FIT.getDescricao());
+				FirstFit.executar();
 				break;
 			
 			case "2":
 				System.out.println("Opcao escolhida: Alocação Next Fit...\n");
-				Algoritmos.executar(AlocacaoEnums.NEXT_FIT.getDescricao());
+				NextFit.executar();
 				break;
 			
 			case "3":
 				System.out.println("Opcao escolhida: Alocação Best Fit...\n");
-				Algoritmos.executar(AlocacaoEnums.BEST_FIT.getDescricao());
+				BestFit.executar();
 				break;
 			
 			case "4":
 				System.out.println("Opcao escolhida: Alocação Worst Fit...\n");
-				Algoritmos.executar(AlocacaoEnums.WORST_FIT.getDescricao());
+				WorstFit.executar();
 				break;
 			
 			case "5":
