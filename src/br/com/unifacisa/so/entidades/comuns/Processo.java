@@ -1,25 +1,46 @@
 package br.com.unifacisa.so.entidades.comuns;
 
+import br.com.unifacisa.so.entidades.comuns.enums.StatusEspacoEnum;
+
 public class Processo {
 
-	private int id;
-    private int tamanho;
+	private Integer idProcesso;
+	private Integer tamanho;
+	private StatusEspacoEnum statusProcesso;
 
-    public Processo(int id, int tamanho) {
-        this.id = id;
-        this.tamanho = tamanho;
-    }
+	public Processo(Integer idProcesso, Integer tamanho, StatusEspacoEnum statusProcesso) {
+		this.idProcesso = idProcesso;
+		this.tamanho = tamanho;
+		this.statusProcesso = statusProcesso;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public StatusEspacoEnum getStatusProcesso() {
+		return statusProcesso;
+	}
 
-    public int getTamanho() {
-        return tamanho;
-    }
+	public void setStatusProcesso(StatusEspacoEnum statusProcesso) {
+		this.statusProcesso = statusProcesso;
+	}
 
-    public void setTamanho(int tamanho) {
-        this.tamanho = tamanho;
-    }
+	public Integer getIdProcesso() {
+		return idProcesso;
+	}
+
+	public Integer getTamanho() {
+		return tamanho;
+	}
+
+	public boolean isLivre() {
+		if (StatusEspacoEnum.LIVRE.equals(this.statusProcesso)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "Processo [idProcesso = " + idProcesso + ", tamanho = " + tamanho + ", statusProcesso = "
+				+ statusProcesso + ", classificacao = " + "]";
+	}
 
 }

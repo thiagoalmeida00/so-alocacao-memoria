@@ -4,22 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Memoria {
-	
-	private int tamanho;
-    private List<NoProcesso> listaProcessos;
 
-    public Memoria(int tamanho) {
-        this.tamanho = tamanho;
-        this.listaProcessos = new ArrayList<>();
-        NoProcesso primeiroNo = new NoProcesso(tamanho);
-        this.listaProcessos.add(primeiroNo);
-    }
+	public static Integer tamanho = 1000;
+	public static List<Processo> processosAlocados = new ArrayList<Processo>();
 
-    public int getTamanho() {
-        return tamanho;
-    }
+	public static Integer getTamanho() {
+		return tamanho;
+	}
 
-    public List<NoProcesso> getListaProcessos() {
-        return listaProcessos;
-    }
 }
