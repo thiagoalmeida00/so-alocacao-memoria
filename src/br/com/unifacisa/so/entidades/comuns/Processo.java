@@ -40,7 +40,7 @@ public class Processo {
 	@Override
 	public String toString() {
 		return "Processo [idProcesso = " + idProcesso + ", tamanho = " + tamanho + ", statusProcesso = "
-				+ statusProcesso + ", classificacao = " + "]";
+				+ statusProcesso + "]";
 	}
 
 }

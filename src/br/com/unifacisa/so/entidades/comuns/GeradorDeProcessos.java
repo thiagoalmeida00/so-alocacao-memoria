@@ -13,7 +13,8 @@ import br.com.unifacisa.so.entidades.comuns.enums.StatusEspacoEnum;
 public class GeradorDeProcessos {
 
 	ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-	ScheduledExecutorService executorFluxo = Executors.newScheduledThreadPool(2);
+	ScheduledExecutorService executorFluxoAlocacao = Executors.newScheduledThreadPool(1);
+	ScheduledExecutorService executorFluxoDesalocacao = Executors.newScheduledThreadPool(1);
 	Random random = new Random();
 
 	public static List<Processo> listaProcessosGerados = new ArrayList<Processo>();
@@ -21,13 +22,24 @@ public class GeradorDeProcessos {
 
 	public GeradorDeProcessos() {
 		/* Agendar a execução do método gerarProcesso() a cada 2 segundos */
-		executor.scheduleAtFixedRate(this::gerarProcesso, 0, 2, TimeUnit.SECONDS);
+		executor.scheduleAtFixedRate(this::gerarProcesso, 0, 1, TimeUnit.SECONDS);
 
 		/* Agendar a execução do método alocarProcesso() a cada 2 segundos */
-		executorFluxo.scheduleAtFixedRate(() -> FirstFit.alocarProcesso(), 0, 2, TimeUnit.SECONDS);
+		executorFluxoAlocacao.scheduleAtFixedRate(() -> FirstFit.alocarProcesso(), 0, 1, TimeUnit.SECONDS);
 
 		/* Agendar a execução do método desalocarProcesso() a cada 1 segundo */
-		executorFluxo.scheduleAtFixedRate(() -> FirstFit.desalocarProcesso(), 0, 1, TimeUnit.SECONDS);
+		executorFluxoDesalocacao.scheduleAtFixedRate(() -> FirstFit.desalocarProcesso(), 0, 2, TimeUnit.SECONDS);
+		
+		try {
+	        Thread.sleep(60000);
+	    } catch (InterruptedException e) {
+	        e.printStackTrace();
+	    }
+
+		/* Encerrar o executor após 1 minuto */
+	    executor.shutdown();
+	    executorFluxoAlocacao.shutdown();
+	    executorFluxoDesalocacao.shutdown();
 	}
 
 	public Processo gerarProcesso() {
