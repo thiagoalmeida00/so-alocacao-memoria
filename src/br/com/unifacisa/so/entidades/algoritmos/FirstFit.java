@@ -17,6 +17,8 @@ public class FirstFit {
 	public static int totalProcessosGerados = 0;
 	static int totalProcessosAlocados = 0;
 	static int totalProcessosDescartados = 0;
+	public static int somaTotalDeTodosProcessos = 0;
+
 	//static int totalEspacoLivre = Memoria.tamanho == null ? 0 : Memoria.tamanho;
 	static int totalEspacoLivre = Memoria.getTamanho();
 
@@ -32,30 +34,28 @@ public class FirstFit {
 
 		if (!Memoria.processosAlocados.isEmpty() && Memoria.getTamanho() < 1000) {
 			int posicao = 0;
-			List<Processo> auxList = new ArrayList<>();
 			for (Processo espaco : Memoria.processosAlocados) {
 				if (espaco.isLivre() && espaco.getTamanho() >= processo.getTamanho()) {
 					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
-
+					espaco.setTamanho(espaco.getTamanho()-processo.getTamanho());
 					Memoria.processosAlocados.add(posicao, processo);
 					totalProcessosAlocados++;
 					Memoria.tamanho -= processo.getTamanho();
-					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " alocado na memória.");
-					posicao++;
-					break;
-				} else {
-					auxList = Memoria.processosAlocados;
-					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
-					totalProcessosAlocados++;
-					auxList.add(processo);
-					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " alocado na memória.");
-					Memoria.tamanho -= processo.getTamanho();
-					posicao++;
+					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
+							+ " | tamanho: " + processo.getTamanho()
+							+ " alocado na memória.");
 					break;
 				}
+				posicao++;
 			}
-			if(!auxList.isEmpty()){
-				Memoria.processosAlocados = auxList;
+			if(!Memoria.processosAlocados.contains(processo)){
+				processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
+				totalProcessosAlocados++;
+				Memoria.processosAlocados.add(processo);
+				System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
+						+ " | tamanho: " + processo.getTamanho()
+						+ " alocado na memória.");
+				Memoria.tamanho -= processo.getTamanho();
 			}
 			totalProcessosDescartados++;
 			GeradorDeProcessos.listaProcessosGerados.remove(processo);
@@ -93,7 +93,7 @@ public class FirstFit {
 		Memoria.processosAlocados.set(index, processoRemovido);
 		Memoria.tamanho += processoRemovido.getTamanho();
 		System.out.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso()
-				+ " tamanho: " + processoRemovido.getTamanho()
+				+ " | tamanho: " + processoRemovido.getTamanho()
 				+ " removido | Espaço livre.");
 		exibirMemoria();
 	}
@@ -159,7 +159,7 @@ public class FirstFit {
 	public static void executar() {
 		new GeradorDeProcessos();
 
-		Double tamanhoMedioProcessos = (double) totalEspacoLivre / totalProcessosGerados;
+		Double tamanhoMedioProcessos = (double) somaTotalDeTodosProcessos / totalProcessosGerados;
 		Double ocupacaoMediaMemoria = 100 - ((double) totalEspacoLivre / 1000) * 100;
 		Double taxaDescarte = (double) totalProcessosDescartados / totalProcessosGerados * 100;
 

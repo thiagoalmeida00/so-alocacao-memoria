@@ -30,6 +30,10 @@ public class Processo {
 		return tamanho;
 	}
 
+	public void setTamanho(Integer tamanho){
+		this.tamanho = tamanho;
+	}
+
 	public boolean isLivre() {
 		if (StatusEspacoEnum.LIVRE.equals(this.statusProcesso)) {
 			return true;
