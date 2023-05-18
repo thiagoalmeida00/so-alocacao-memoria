@@ -14,7 +14,7 @@ public class GeradorDeProcessos {
 
 	ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 	ScheduledExecutorService executorFluxoAlocacao = Executors.newScheduledThreadPool(1);
-	//ScheduledExecutorService executorFluxoDesalocacao = Executors.newScheduledThreadPool(1);
+	ScheduledExecutorService executorFluxoDesalocacao = Executors.newScheduledThreadPool(1);
 	Random random = new Random();
 
 	public static List<Processo> listaProcessosGerados = new ArrayList<Processo>();
@@ -37,22 +37,26 @@ public class GeradorDeProcessos {
 	        e.printStackTrace();
 	    }
 		executor.shutdown();
-		/* Agendar a execução do método alocarProcesso() a cada 2 segundos */
+		/* Agendar a execução do método alocarProcesso() a cada 1 segundos */
 		executorFluxoAlocacao.scheduleAtFixedRate(() -> FirstFit.alocarProcesso(), 0, 1, TimeUnit.SECONDS);
 		
 		try {
-	        Thread.sleep(600000);
+	        Thread.sleep(2000);
 	    } catch (InterruptedException e) {
 	        e.printStackTrace();
-	    }
-		
-		/* Agendar a execução do método desalocarProcesso() a cada 1 segundo */
-		//executorFluxoDesalocacao.scheduleAtFixedRate(() -> FirstFit.desalocarProcesso(), 0, 3, TimeUnit.SECONDS);
+		}
 
+		/* Agendar a execução do método desalocarProcesso() a cada 2 segundo */
+		executorFluxoDesalocacao.scheduleAtFixedRate(() -> FirstFit.desalocarProcesso(), 0, 2, TimeUnit.SECONDS);
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		/* Encerrar o executor após 1 minuto */
-	    //executor.shutdown();
-	    executorFluxoAlocacao.shutdown();
-	    //executorFluxoDesalocacao.shutdown();
+		//executor.shutdown();
+		executorFluxoAlocacao.shutdown();
+		executorFluxoDesalocacao.shutdown();
 	}
 
 	public Processo gerarProcesso() {
@@ -60,7 +64,7 @@ public class GeradorDeProcessos {
 		Processo processo = new Processo(ultimoId++, tamanho, StatusEspacoEnum.LIVRE);
 		listaProcessosGerados.add(processo);
 		FirstFit.totalProcessosGerados++;
-		System.out.println("INFO - Processo id: " + ultimoId + " criado | " + "tamanho: " + tamanho);
+		System.out.println("INFO - Processo id: " + (ultimoId-1) + " criado | " + "tamanho: " + tamanho);
 		return processo;
 	}
 }

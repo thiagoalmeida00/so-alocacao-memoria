@@ -20,7 +20,7 @@ public class FirstFit {
 	//static int totalEspacoLivre = Memoria.tamanho == null ? 0 : Memoria.tamanho;
 	static int totalEspacoLivre = Memoria.getTamanho();
 
-	public static void alocarProcesso() {
+	public synchronized static void alocarProcesso() {
 		System.out.println("INFO: Iniciando alocação.");
 
 		if (GeradorDeProcessos.listaProcessosGerados.isEmpty()) {
@@ -73,7 +73,7 @@ public class FirstFit {
 		exibirMemoria();
 	}
 
-	public static void desalocarProcesso() {
+	public synchronized static void desalocarProcesso() {
 		System.out.println("INFO: Iniciando desalocação.");
 
 		if (Memoria.processosAlocados.isEmpty()) {
@@ -92,11 +92,13 @@ public class FirstFit {
 
 		Memoria.processosAlocados.set(index, processoRemovido);
 		Memoria.tamanho += processoRemovido.getTamanho();
-		System.out.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso() + " removido | Espaço livre.");
+		System.out.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso()
+				+ " tamanho: " + processoRemovido.getTamanho()
+				+ " removido | Espaço livre.");
 		exibirMemoria();
 	}
 
-	public static void exibirMemoria() {
+	public synchronized static void exibirMemoria() {
 
 		Processo processoAnterior = null;
 
@@ -132,7 +134,7 @@ public class FirstFit {
 		System.out.println();
 	}
 
-	public static Integer endereco(Processo processo) {
+	public synchronized static Integer endereco(Processo processo) {
 
 		Integer enderecoAtual = 0;
 		Integer enderecoAnterior = 0;
