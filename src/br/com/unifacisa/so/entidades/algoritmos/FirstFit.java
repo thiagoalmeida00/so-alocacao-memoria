@@ -2,6 +2,8 @@ package br.com.unifacisa.so.entidades.algoritmos;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -30,6 +32,7 @@ public class FirstFit {
 
 		if (!Memoria.processosAlocados.isEmpty() && Memoria.getTamanho() < 1000) {
 			int posicao = 0;
+			List<Processo> auxList = new ArrayList<>();
 			for (Processo espaco : Memoria.processosAlocados) {
 				if (espaco.isLivre() && espaco.getTamanho() >= processo.getTamanho()) {
 					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
@@ -38,15 +41,21 @@ public class FirstFit {
 					totalProcessosAlocados++;
 					Memoria.tamanho -= processo.getTamanho();
 					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " alocado na memória.");
+					posicao++;
 					break;
 				} else {
+					auxList = Memoria.processosAlocados;
 					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
-					Memoria.processosAlocados.add(processo);
 					totalProcessosAlocados++;
+					auxList.add(processo);
 					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " alocado na memória.");
 					Memoria.tamanho -= processo.getTamanho();
+					posicao++;
+					break;
 				}
-				posicao++;
+			}
+			if(!auxList.isEmpty()){
+				Memoria.processosAlocados = auxList;
 			}
 			totalProcessosDescartados++;
 			GeradorDeProcessos.listaProcessosGerados.remove(processo);
@@ -137,7 +146,7 @@ public class FirstFit {
 						enderecoAtual = enderecoAnterior;
 						break;
 					}
-					enderecoAnterior += processo.getTamanho();
+					enderecoAnterior += registro.getTamanho();
 				}
 			}
 		}
