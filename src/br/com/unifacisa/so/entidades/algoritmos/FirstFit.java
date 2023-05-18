@@ -15,6 +15,7 @@ public class FirstFit {
 	public static int totalProcessosGerados = 0;
 	static int totalProcessosAlocados = 0;
 	static int totalProcessosDescartados = 0;
+	//static int totalEspacoLivre = Memoria.tamanho == null ? 0 : Memoria.tamanho;
 	static int totalEspacoLivre = Memoria.getTamanho();
 
 	public static void alocarProcesso() {
@@ -38,6 +39,12 @@ public class FirstFit {
 					Memoria.tamanho -= processo.getTamanho();
 					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " alocado na memória.");
 					break;
+				} else {
+					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
+					Memoria.processosAlocados.add(processo);
+					totalProcessosAlocados++;
+					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " alocado na memória.");
+					Memoria.tamanho -= processo.getTamanho();
 				}
 				posicao++;
 			}
@@ -140,8 +147,6 @@ public class FirstFit {
 
 	public static void executar() {
 		new GeradorDeProcessos();
-
-		System.out.println("INFO: FirstFit iniciado!");
 
 		Double tamanhoMedioProcessos = (double) totalEspacoLivre / totalProcessosGerados;
 		Double ocupacaoMediaMemoria = 100 - ((double) totalEspacoLivre / 1000) * 100;
