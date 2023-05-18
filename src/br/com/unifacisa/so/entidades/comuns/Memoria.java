@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Memoria {
 
-	public static Integer tamanho = 1000;
+	public static Integer tamanho = 600;
 	public static List<Processo> processosAlocados = new ArrayList<Processo>();
 
 	public static Integer getTamanho() {

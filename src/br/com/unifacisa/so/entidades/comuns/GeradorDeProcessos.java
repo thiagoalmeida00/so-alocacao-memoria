@@ -32,7 +32,7 @@ public class GeradorDeProcessos {
 		executor.scheduleAtFixedRate(this::gerarProcesso, 0, 500, TimeUnit.MILLISECONDS);
 
 		try {
-	        Thread.sleep(2500);
+	        Thread.sleep(1000);
 	    } catch (InterruptedException e) {
 	        e.printStackTrace();
 	    }
@@ -49,7 +49,7 @@ public class GeradorDeProcessos {
 		executorFluxoDesalocacao.scheduleAtFixedRate(() -> FirstFit.desalocarProcesso(), 0, 2, TimeUnit.SECONDS);
 
 		try {
-			Thread.sleep(20000);
+			Thread.sleep(50000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
