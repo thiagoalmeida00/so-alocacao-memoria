@@ -111,6 +111,12 @@ public class FirstFit {
 		Processo processoAnterior = null;
 
 		if (!Memoria.processosAlocados.isEmpty()) {
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+			symbols.setDecimalSeparator('.');
+			DecimalFormat df = new DecimalFormat("#.##", symbols);
+
+			double memoria = Double.parseDouble(df.format(((double)Memoria.getTamanho() / ESPACO_TOTAL_MEMORIA) * 100));
+			System.out.println("Espaço Livre da Memória: "+ memoria + "% | ");
 			for (Processo processo : Memoria.processosAlocados) {
 
 				String status = processo.isLivre() ? "L" : "O";
@@ -170,117 +176,6 @@ public class FirstFit {
 		Double tamanhoMedioProcessos = (double) somaTotalDeTodosProcessos / totalProcessosGerados;
 		Double ocupacaoMediaMemoria =  ((double)(totalEspacoLivre / (totalProcessosAlocados * ESPACO_TOTAL_MEMORIA)) * 100);
 		Double taxaDescarte = (double) totalProcessosDescartados / totalProcessosGerados * 100;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
 		symbols.setDecimalSeparator('.');
 		DecimalFormat df = new DecimalFormat("#.##", symbols);
