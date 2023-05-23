@@ -1,15 +1,15 @@
 package br.com.unifacisa.so.entidades.algoritmos;
 
-import br.com.unifacisa.so.entidades.comuns.GeradorDeProcessos;
 import br.com.unifacisa.so.entidades.comuns.Memoria;
 import br.com.unifacisa.so.entidades.comuns.NoProcesso;
 import br.com.unifacisa.so.entidades.comuns.Processo;
+import br.com.unifacisa.so.entidades.gerador.GeradorDeProcessosFF;
 
 public class WorstFit {
 
 	public static void executar() {
         Memoria memoria = new Memoria(1000);
-        GeradorDeProcessos gerador = new GeradorDeProcessos();
+        GeradorDeProcessosFF gerador = new GeradorDeProcessosFF();
         int totalProcessosGerados = 0;
         int totalProcessosAlocados = 0;
         int totalProcessosDescartados = 0;
