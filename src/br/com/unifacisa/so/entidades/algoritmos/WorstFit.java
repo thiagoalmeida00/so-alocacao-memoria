@@ -1,77 +1,188 @@
 package br.com.unifacisa.so.entidades.algoritmos;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+import java.util.Random;
+
 import br.com.unifacisa.so.entidades.comuns.Memoria;
-import br.com.unifacisa.so.entidades.comuns.NoProcesso;
 import br.com.unifacisa.so.entidades.comuns.Processo;
-import br.com.unifacisa.so.entidades.gerador.GeradorDeProcessosFF;
+import br.com.unifacisa.so.entidades.comuns.enums.StatusEspacoEnum;
+import br.com.unifacisa.so.entidades.gerador.GeradorDeProcessosWF;
 
 public class WorstFit {
 
+	public static int totalProcessosGerados = 0;
+	public static int totalProcessosAlocados = 0;
+	public static int totalProcessosDescartados = 0;
+	public static int somaTotalDeTodosProcessos = 0;
+	public static double totalEspacoLivre = 0;
+
+	static final int ESPACO_TOTAL_MEMORIA = 1000;
+
+	public synchronized static void alocarProcesso() {
+		System.out.println("INFO: Iniciando alocação.");
+
+		if (GeradorDeProcessosWF.listaProcessosGerados.isEmpty()) {
+			System.out.println("ALERTA: Ainda não existem processos gerados.");
+			return;
+		}
+
+		Processo processo = GeradorDeProcessosWF.listaProcessosGerados.get(0);
+
+		if (!Memoria.processosAlocados.isEmpty() && (Memoria.getTamanho() - processo.getTamanho()) >= 0) {
+			int posicao = 0;
+			for (Processo espaco : Memoria.processosAlocados) {
+				if (espaco.isLivre() && espaco.getTamanho() >= processo.getTamanho() && posicao <= 1000) {
+					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
+					espaco.setTamanho(espaco.getTamanho()-processo.getTamanho());
+					Memoria.processosAlocados.add(posicao, processo);
+					totalProcessosAlocados++;
+					Memoria.tamanho -= processo.getTamanho();
+					totalEspacoLivre += Memoria.getTamanho();
+					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
+							+ " | tamanho: " + processo.getTamanho()
+							+ " alocado na memória.");
+					break;
+				}
+				posicao++;
+			}
+			if(!Memoria.processosAlocados.contains(processo)){
+				processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
+				totalProcessosAlocados++;
+				Memoria.processosAlocados.add(processo);
+				System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
+						+ " | tamanho: " + processo.getTamanho()
+						+ " alocado na memória.");
+				Memoria.tamanho -= processo.getTamanho();
+				totalEspacoLivre += Memoria.getTamanho();
+			}
+			GeradorDeProcessosWF.listaProcessosGerados.remove(processo);
+		} else if((Memoria.getTamanho() - processo.getTamanho()) <= 0){
+			System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " Descartado.");
+			totalProcessosDescartados++;
+		} else {
+			if ((Memoria.getTamanho()) <= 1000) {
+				processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
+				Memoria.processosAlocados.add(processo);
+				totalProcessosAlocados++;
+				System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " alocado na memória.");
+
+				GeradorDeProcessosWF.listaProcessosGerados.remove(processo);
+				Memoria.tamanho -= processo.getTamanho();
+				totalEspacoLivre += Memoria.getTamanho();
+			}
+		}
+		exibirMemoria();
+	}
+
+	public synchronized static void desalocarProcesso() {
+		System.out.println("INFO: Iniciando desalocação.");
+
+		if (Memoria.processosAlocados.isEmpty()) {
+			System.out.println("ALERTA: Não há processos alocados para remover.");
+			return;
+		}
+
+		Random random = new Random();
+		int index = random.nextInt(Memoria.processosAlocados.size());
+
+		Processo processoRemovido = new Processo(Memoria.processosAlocados.get(index).getIdProcesso(),
+				Memoria.processosAlocados.get(index).getTamanho(),
+				Memoria.processosAlocados.get(index).getStatusProcesso());
+
+		processoRemovido.setStatusProcesso(StatusEspacoEnum.LIVRE);
+
+		Memoria.processosAlocados.set(index, processoRemovido);
+		Memoria.tamanho += processoRemovido.getTamanho();
+		System.out.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso()
+				+ " | tamanho: " + processoRemovido.getTamanho()
+				+ " removido | Espaço livre.");
+		exibirMemoria();
+	}
+
+	public synchronized static void exibirMemoria() {
+
+		Processo processoAnterior = null;
+
+		if (!Memoria.processosAlocados.isEmpty()) {
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+			symbols.setDecimalSeparator('.');
+			DecimalFormat df = new DecimalFormat("#.##", symbols);
+
+			double memoria = Double.parseDouble(df.format(((double)Memoria.getTamanho() / ESPACO_TOTAL_MEMORIA) * 100));
+			System.out.println("Espaço Livre da Memória: "+ memoria + "% | ");
+			for (Processo processo : Memoria.processosAlocados) {
+
+				String status = processo.isLivre() ? "L" : "O";
+				Integer comecaEm = endereco(processo);
+				Integer tamanho = processo.getTamanho();
+
+				if (processoAnterior != null) {
+
+					String statusProcessoAnterior = processoAnterior.isLivre() ? "L" : "O";
+					Integer comecaEmProcessoAnterior = endereco(processoAnterior);
+					Integer tamanhoProcessoAnterior = processoAnterior.getTamanho();
+
+					System.out.print("[" + statusProcessoAnterior + " | " + comecaEmProcessoAnterior + " | "
+							+ tamanhoProcessoAnterior + "] ");
+					System.out.print("[" + status + " | " + comecaEm + " | " + tamanho + "]");
+					processoAnterior = null;
+				} else {
+					processoAnterior = processo;
+				}
+
+			}
+			if (processoAnterior != null) {
+				String status = processoAnterior.isLivre() ? "L" : "O";
+				Integer comecaEm = endereco(processoAnterior);
+				Integer tamanho = processoAnterior.getTamanho();
+				System.out.print("[" + status + " | " + comecaEm + " | " + tamanho + "] ");
+			}
+		}
+		System.out.println();
+	}
+
+	public synchronized static Integer endereco(Processo processo) {
+
+		Integer enderecoAtual = 0;
+		Integer enderecoAnterior = 0;
+
+		if (!Memoria.processosAlocados.isEmpty()) {
+			if (Memoria.processosAlocados.size() == 1 && Memoria.processosAlocados.contains(processo)) {
+				enderecoAtual = 0;
+			} else {
+				for (Processo registro : Memoria.processosAlocados) {
+					if (processo.getIdProcesso().equals(registro.getIdProcesso())) {
+						enderecoAtual = enderecoAnterior;
+						break;
+					}
+					enderecoAnterior += registro.getTamanho();
+				}
+			}
+		}
+
+		return enderecoAtual;
+	}
+
 	public static void executar() {
-        Memoria memoria = new Memoria(1000);
-        GeradorDeProcessosFF gerador = new GeradorDeProcessosFF();
-        int totalProcessosGerados = 0;
-        int totalProcessosAlocados = 0;
-        int totalProcessosDescartados = 0;
-        int totalEspacoLivre = memoria.getTamanho();
+		new GeradorDeProcessosWF();
 
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 2; j++) {
-                Processo novoProcesso = gerador.gerarProcesso();
-                totalProcessosGerados++;
-                boolean alocado = false;
-                int maiorEspaco = -1;
-                NoProcesso melhorPosicao = null;
+		Double tamanhoMedioProcessos = (double) somaTotalDeTodosProcessos / totalProcessosGerados;
+		Double ocupacaoMediaMemoria =  ((double)(totalEspacoLivre / (totalProcessosAlocados * ESPACO_TOTAL_MEMORIA)) * 100);
+		Double taxaDescarte = (double) totalProcessosDescartados / totalProcessosGerados * 100;
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+		symbols.setDecimalSeparator('.');
+		DecimalFormat df = new DecimalFormat("#.##", symbols);
 
-                for (NoProcesso noAtual : memoria.getListaProcessos()) {
-                    if (noAtual.getProcesso() == null && noAtual.getTamanho() >= novoProcesso.getTamanho() && noAtual.getTamanho() > maiorEspaco) {
-                        maiorEspaco = noAtual.getTamanho();
-                        melhorPosicao = noAtual;
-                    }
-                }
+		tamanhoMedioProcessos = Double.parseDouble(df.format(tamanhoMedioProcessos));
+		ocupacaoMediaMemoria = Double.parseDouble(df.format(ocupacaoMediaMemoria));
+		taxaDescarte = Double.parseDouble(df.format(taxaDescarte));
 
-                if (melhorPosicao != null) {
-                    melhorPosicao.setProcesso(novoProcesso);
-                    totalProcessosAlocados++;
-                    totalEspacoLivre -= novoProcesso.getTamanho();
-                    alocado = true;
-                }
-
-                if (!alocado) {
-                    System.out.println("Processo " + novoProcesso.getId() + " não alocado");
-                    totalProcessosDescartados++;
-                }
-            }
-
-            NoProcesso noAtual = memoria.getListaProcessos().get(0);
-            NoProcesso anterior = null;
-
-            while (noAtual != null) {
-                if (noAtual.getProcesso() != null) {
-                    noAtual.getProcesso().setTamanho(noAtual.getTamanho());
-                } else if (anterior != null && anterior.getProcesso() != null) {
-                    noAtual.setProcesso(anterior.getProcesso());
-                    anterior.setProcesso(null);
-                }
-                anterior = noAtual;
-                noAtual = noAtual.getProximo();
-            }
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        double tamanhoMedioProcessos = (double) totalEspacoLivre / totalProcessosGerados;
-        double ocupacaoMediaMemoria = 100 - ((double) totalEspacoLivre / memoria.getTamanho()) * 100;
-        double taxaDescarte = (double) totalProcessosDescartados / totalProcessosGerados * 100;
-
-        System.out.println("\nResultados do Worst Fit:");
-        System.out.println("Tamanho médio dos processos gerados: " + tamanhoMedioProcessos);
-        System.out.println("Ocupação média da memória por segundo: " + ocupacaoMediaMemoria + "%");
-        System.out.println("Taxa de descarte: " + taxaDescarte + "%");
-    }
+		System.out.println("\nResultados do First Fit:");
+		System.out.println("Tamanho médio dos processos gerados: " + tamanhoMedioProcessos);
+		System.out.println("Ocupação média da memória por segundo: " + ocupacaoMediaMemoria + "%");
+		System.out.println("Taxa de descarte: " + taxaDescarte + "%");
+	}
 	
 }
