@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import br.com.unifacisa.so.entidades.algoritmos.NextFit;
+import br.com.unifacisa.so.entidades.comuns.Memoria;
 import br.com.unifacisa.so.entidades.comuns.Processo;
 import br.com.unifacisa.so.entidades.comuns.enums.StatusEspacoEnum;
 
@@ -69,6 +70,8 @@ public class GeradorDeProcessosNF {
 	}
 	
 	public void limparDados() {
+		Memoria.tamanho = 1000;
+		Memoria.processosAlocados.clear();
 		NextFit.totalProcessosGerados = 0;
 		NextFit.totalProcessosAlocados = 0;
 		NextFit.totalProcessosDescartados = 0;

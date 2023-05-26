@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import br.com.unifacisa.so.entidades.algoritmos.BestFit;
+import br.com.unifacisa.so.entidades.comuns.Memoria;
 import br.com.unifacisa.so.entidades.comuns.Processo;
 import br.com.unifacisa.so.entidades.comuns.enums.StatusEspacoEnum;
 
@@ -43,8 +44,8 @@ public class GeradorDeProcessosBF {
 			e.printStackTrace();
 		}
 
-		/* Agendar a execução do método desalocarProcesso() a cada 2 segundos */
-		executorFluxoDesalocacao.scheduleAtFixedRate(() -> BestFit.desalocarProcesso(), 0, 2, TimeUnit.SECONDS);
+		/* Agendar a execução do método desalocarProcesso() a cada 1.5 segundos */
+		executorFluxoDesalocacao.scheduleAtFixedRate(() -> BestFit.desalocarProcesso(), 0, 1500, TimeUnit.MILLISECONDS);
 
 		try {
 			Thread.sleep(50000);
@@ -69,6 +70,8 @@ public class GeradorDeProcessosBF {
 	}
 	
 	public void limparDados() {
+		Memoria.tamanho = 1000;
+		Memoria.processosAlocados.clear();
 		BestFit.totalProcessosGerados = 0;
 		BestFit.totalProcessosAlocados = 0;
 		BestFit.totalProcessosDescartados = 0;

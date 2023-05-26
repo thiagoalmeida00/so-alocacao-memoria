@@ -31,21 +31,43 @@ public class BestFit {
 		Processo processo = GeradorDeProcessosBF.listaProcessosGerados.get(0);
 
 		if (!Memoria.processosAlocados.isEmpty() && (Memoria.getTamanho() - processo.getTamanho()) >= 0) {
-			int posicao = 0;
-			for (Processo espaco : Memoria.processosAlocados) {
-				if (espaco.isLivre() && espaco.getTamanho() >= processo.getTamanho() && posicao <= 1000) {
-					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
-					espaco.setTamanho(espaco.getTamanho()-processo.getTamanho());
-					Memoria.processosAlocados.add(posicao, processo);
-					totalProcessosAlocados++;
-					Memoria.tamanho -= processo.getTamanho();
-					totalEspacoLivre += Memoria.getTamanho();
-					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
-							+ " | tamanho: " + processo.getTamanho()
-							+ " alocado na memória.");
+			int melhorPosicao = 0;
+			int resultMelhorAtual = 50;
+			for (int i = 0; i < Memoria.processosAlocados.size(); i++) {
+				Processo processoAtual = Memoria.processosAlocados.get(i);
+				int tamProcesso = processo.getTamanho();
+				int tamProcessoAtual = processoAtual.getTamanho();
+				int result = 0;
+				if(processoAtual.isLivre() && tamProcessoAtual >= processo.getTamanho()){
+					result = tamProcessoAtual - tamProcesso;
+				}
+				if(tamProcessoAtual == tamProcesso && processoAtual.isLivre()){
+					melhorPosicao = i;
+					resultMelhorAtual = result;
 					break;
 				}
-				posicao++;
+				if(result <= resultMelhorAtual
+						&& processoAtual.isLivre()
+						&& tamProcessoAtual >= processo.getTamanho()){
+
+					melhorPosicao = i;
+					resultMelhorAtual = result;
+				}
+			}
+
+			if(resultMelhorAtual != 50){
+				Processo espaco = Memoria.processosAlocados.get(melhorPosicao);
+				processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
+				if(espaco.isLivre()) {
+					espaco.setTamanho(espaco.getTamanho() - processo.getTamanho());
+				}
+				Memoria.processosAlocados.add(melhorPosicao, processo);
+				totalProcessosAlocados++;
+				Memoria.tamanho -= processo.getTamanho();
+				totalEspacoLivre += Memoria.getTamanho();
+				System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
+						+ " | tamanho: " + processo.getTamanho()
+						+ " alocado na memória.");
 			}
 			if(!Memoria.processosAlocados.contains(processo)){
 				processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
@@ -87,6 +109,9 @@ public class BestFit {
 		Random random = new Random();
 		int index = random.nextInt(Memoria.processosAlocados.size());
 
+		if(Memoria.processosAlocados.get(index).isLivre()){
+			index = random.nextInt(Memoria.processosAlocados.size());
+		}
 		Processo processoRemovido = new Processo(Memoria.processosAlocados.get(index).getIdProcesso(),
 				Memoria.processosAlocados.get(index).getTamanho(),
 				Memoria.processosAlocados.get(index).getStatusProcesso());
@@ -95,7 +120,7 @@ public class BestFit {
 
 		Memoria.processosAlocados.set(index, processoRemovido);
 		Memoria.tamanho += processoRemovido.getTamanho();
-		System.out.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso()
+		System.err.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso()
 				+ " | tamanho: " + processoRemovido.getTamanho()
 				+ " removido | Espaço livre.");
 		exibirMemoria();
@@ -179,7 +204,7 @@ public class BestFit {
 		ocupacaoMediaMemoria = Double.parseDouble(df.format(ocupacaoMediaMemoria));
 		taxaDescarte = Double.parseDouble(df.format(taxaDescarte));
 
-		System.out.println("\nResultados do First Fit:");
+		System.out.println("\nResultados do Best Fit:");
 		System.out.println("Tamanho médio dos processos gerados: " + tamanhoMedioProcessos);
 		System.out.println("Ocupação média da memória por segundo: " + ocupacaoMediaMemoria + "%");
 		System.out.println("Taxa de descarte: " + taxaDescarte + "%");
