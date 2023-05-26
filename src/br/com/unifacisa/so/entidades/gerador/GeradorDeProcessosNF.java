@@ -74,6 +74,6 @@ public class GeradorDeProcessosNF {
 		NextFit.totalProcessosDescartados = 0;
 		NextFit.somaTotalDeTodosProcessos = 0;
 		NextFit.totalEspacoLivre = 0;
-		NextFit.posicaoUltimoDesalocado = 0;
+		NextFit.posicaoUltimoAlocado = 0;
 	}
 }

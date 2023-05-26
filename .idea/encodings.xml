@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/br/com/unifacisa/so/aplicacao/Aplicacao.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/br/com/unifacisa/so/entidades/algoritmos/BestFit.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/br/com/unifacisa/so/entidades/algoritmos/FirstFit.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/br/com/unifacisa/so/entidades/algoritmos/NextFit.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/br/com/unifacisa/so/entidades/comuns/GeradorDeProcessos.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/br/com/unifacisa/so/entidades/gerador/GeradorDeProcessosNF.java" charset="windows-1252" />
+    <file url="PROJECT" charset="windows-1252" />
+  </component>
+</project>

@@ -17,7 +17,7 @@ public class NextFit {
 	public static int totalProcessosDescartados = 0;
 	public static int somaTotalDeTodosProcessos = 0;
 	public static double totalEspacoLivre = 0;
-	public static int posicaoUltimoDesalocado = 0;
+	public static int posicaoUltimoAlocado = 0;
 
 	static final int ESPACO_TOTAL_MEMORIA = 1000;
 
@@ -46,7 +46,8 @@ public class NextFit {
 		} else if (!Memoria.processosAlocados.isEmpty() && (Memoria.getTamanho() - processo.getTamanho()) >= 0) {
 			int posicao = 0;
 			for (Processo espaco : Memoria.processosAlocados) {
-				if (espaco.isLivre() && espaco.getTamanho() >= processo.getTamanho() && posicaoUltimoDesalocado == posicao) {
+				if (espaco.isLivre() && espaco.getTamanho() >= processo.getTamanho() && posicao <= 1000
+						&& posicao == (posicaoUltimoAlocado)) {
 					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
 					espaco.setTamanho(espaco.getTamanho() - processo.getTamanho());
 					Memoria.processosAlocados.add(posicao, processo);
@@ -54,12 +55,24 @@ public class NextFit {
 					Memoria.tamanho -= processo.getTamanho();
 					totalEspacoLivre += Memoria.getTamanho();
 					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso() + " | tamanho: "
-							+ processo.getTamanho() + " | posicao: " + posicaoUltimoDesalocado + " | alocado na memória.");
+							+ processo.getTamanho() + " | posicao: " + posicaoUltimoAlocado + " | alocado na memória.");
+					posicaoUltimoAlocado = posicao;
+					System.out.println("INFO: Ultima Posição: " + posicaoUltimoAlocado);
 					break;
 				}
+
 				posicao++;
 			}
-
+			if(!Memoria.processosAlocados.contains(processo)){
+				processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
+				totalProcessosAlocados++;
+				Memoria.processosAlocados.add(processo);
+				System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
+						+ " | tamanho: " + processo.getTamanho()
+						+ " alocado na memória.");
+				Memoria.tamanho -= processo.getTamanho();
+				totalEspacoLivre += Memoria.getTamanho();
+			}
 			GeradorDeProcessosNF.listaProcessosGerados.remove(processo);
 
 		} else if ((Memoria.getTamanho() - processo.getTamanho()) <= 0) {
@@ -90,12 +103,8 @@ public class NextFit {
 		Memoria.processosAlocados.set(index, processoRemovido);
 		Memoria.tamanho += processoRemovido.getTamanho();
 		
-		posicaoUltimoDesalocado = index;
-		
 		System.out.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso() + " | tamanho: "
-				+ processoRemovido.getTamanho() + " | posicao: " + posicaoUltimoDesalocado + " | removido | Espaço livre.");
-		
-		System.out.println("INFO: Posição desalocação: " + posicaoUltimoDesalocado);
+				+ processoRemovido.getTamanho() + " | posicao: " + index + " | removido | Espaço livre.");
 		
 		exibirMemoria();
 	}

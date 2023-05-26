@@ -43,8 +43,8 @@ public class GeradorDeProcessosWF {
 			e.printStackTrace();
 		}
 
-		/* Agendar a execução do método desalocarProcesso() a cada 2 segundos */
-		executorFluxoDesalocacao.scheduleAtFixedRate(() -> WorstFit.desalocarProcesso(), 0, 2, TimeUnit.SECONDS);
+		/* Agendar a execução do método desalocarProcesso() a cada 1 segundos */
+		executorFluxoDesalocacao.scheduleAtFixedRate(() -> WorstFit.desalocarProcesso(), 0, 1, TimeUnit.SECONDS);
 
 		try {
 			Thread.sleep(50000);

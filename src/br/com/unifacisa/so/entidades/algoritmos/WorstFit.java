@@ -2,8 +2,10 @@ package br.com.unifacisa.so.entidades.algoritmos;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import br.com.unifacisa.so.entidades.comuns.Memoria;
 import br.com.unifacisa.so.entidades.comuns.Processo;
@@ -31,22 +33,49 @@ public class WorstFit {
 		Processo processo = GeradorDeProcessosWF.listaProcessosGerados.get(0);
 
 		if (!Memoria.processosAlocados.isEmpty() && (Memoria.getTamanho() - processo.getTamanho()) >= 0) {
-			int posicao = 0;
-			for (Processo espaco : Memoria.processosAlocados) {
-				if (espaco.isLivre() && espaco.getTamanho() >= processo.getTamanho() && posicao <= 1000) {
-					processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
-					espaco.setTamanho(espaco.getTamanho()-processo.getTamanho());
-					Memoria.processosAlocados.add(posicao, processo);
-					totalProcessosAlocados++;
-					Memoria.tamanho -= processo.getTamanho();
-					totalEspacoLivre += Memoria.getTamanho();
-					System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
-							+ " | tamanho: " + processo.getTamanho()
-							+ " alocado na memória.");
+
+			int piorPosicao = 0;
+			int resultMelhorAtual = 0;
+			Processo melhorProcesso = Memoria.processosAlocados.get(piorPosicao);
+			int tamProcessoMelhor = melhorProcesso.getTamanho();
+			for (int i = 0; i < Memoria.processosAlocados.size(); i++) {
+				Processo processoAtual = Memoria.processosAlocados.get(i);
+				int tamProcesso = processo.getTamanho();
+				int tamProcessoAtual = processoAtual.getTamanho();
+				int result = 0;
+				if(processoAtual.isLivre()&& tamProcessoAtual >= processo.getTamanho()){
+					result = tamProcessoAtual - tamProcesso;
+				}
+				if(tamProcessoAtual == 50 && processoAtual.isLivre()){
+					piorPosicao = i;
 					break;
 				}
-				posicao++;
+				if(result >= resultMelhorAtual
+						&& processoAtual.isLivre()
+						&& tamProcessoAtual >= processo.getTamanho()){
+
+					piorPosicao = i;
+					melhorProcesso = Memoria.processosAlocados.get(piorPosicao);
+					tamProcessoMelhor = processoAtual.getTamanho();
+					resultMelhorAtual = result;
+				}
 			}
+
+			if(resultMelhorAtual != 0){
+				Processo espaco = Memoria.processosAlocados.get(piorPosicao);
+				processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
+				if(espaco.isLivre()) {
+					espaco.setTamanho(espaco.getTamanho() - processo.getTamanho());
+				}
+				Memoria.processosAlocados.add(piorPosicao, processo);
+				totalProcessosAlocados++;
+				Memoria.tamanho -= processo.getTamanho();
+				totalEspacoLivre += Memoria.getTamanho();
+				System.out.println("INFO: Processo " + "id: " + processo.getIdProcesso()
+						+ " | tamanho: " + processo.getTamanho()
+						+ " alocado na memória.");
+			}
+
 			if(!Memoria.processosAlocados.contains(processo)){
 				processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
 				totalProcessosAlocados++;
