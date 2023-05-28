@@ -23,7 +23,7 @@ public class GeradorDeProcessosBF {
 	private int ultimoId = 0;
 
 	public GeradorDeProcessosBF() {
-		System.out.println("INFO: FirstFit iniciado!");
+		System.out.println("INFO: BestFit iniciado!");
 		
 		limparDados();
 

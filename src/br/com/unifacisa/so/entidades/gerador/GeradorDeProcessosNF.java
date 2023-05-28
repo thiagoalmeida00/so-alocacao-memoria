@@ -44,8 +44,8 @@ public class GeradorDeProcessosNF {
 			e.printStackTrace();
 		}
 
-		/* Agendar a execução do método desalocarProcesso() a cada 3 segundos */
-		executorFluxoDesalocacao.scheduleAtFixedRate(() -> NextFit.desalocarProcesso(), 0, 3, TimeUnit.SECONDS);
+		/* Agendar a execução do método desalocarProcesso() a cada 1,5 segundos */
+		executorFluxoDesalocacao.scheduleAtFixedRate(() -> NextFit.desalocarProcesso(), 0, 1500, TimeUnit.MILLISECONDS);
 
 		try {
 			Thread.sleep(50000);
@@ -77,6 +77,6 @@ public class GeradorDeProcessosNF {
 		NextFit.totalProcessosDescartados = 0;
 		NextFit.somaTotalDeTodosProcessos = 0;
 		NextFit.totalEspacoLivre = 0;
-		NextFit.posicaoUltimoAlocado = 0;
+		NextFit.ultimaPosicaoAlocado = 0;
 	}
 }

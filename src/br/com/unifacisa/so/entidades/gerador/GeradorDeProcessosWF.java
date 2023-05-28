@@ -23,7 +23,7 @@ public class GeradorDeProcessosWF {
 	private int ultimoId = 0;
 
 	public GeradorDeProcessosWF() {
-		System.out.println("INFO: FirstFit iniciado!");
+		System.out.println("INFO: WorstFit iniciado!");
 		
 		limparDados();
 

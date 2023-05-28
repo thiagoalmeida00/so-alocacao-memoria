@@ -78,8 +78,7 @@ public class FirstFit {
 	}
 
 	public synchronized static void desalocarProcesso() {
-		System.out.println("INFO: Iniciando desalocação.");
-
+		
 		if (Memoria.processosAlocados.isEmpty()) {
 			System.out.println("ALERTA: Não há processos alocados para remover.");
 			return;
@@ -92,14 +91,18 @@ public class FirstFit {
 				Memoria.processosAlocados.get(index).getTamanho(),
 				Memoria.processosAlocados.get(index).getStatusProcesso());
 
-		processoRemovido.setStatusProcesso(StatusEspacoEnum.LIVRE);
+		if (StatusEspacoEnum.OCUPADO.equals(processoRemovido.getStatusProcesso())) {
+			System.out.println("INFO: Iniciando desalocação.");
+			
+			processoRemovido.setStatusProcesso(StatusEspacoEnum.LIVRE);
 
-		Memoria.processosAlocados.set(index, processoRemovido);
-		Memoria.tamanho += processoRemovido.getTamanho();
-		System.out.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso()
-				+ " | tamanho: " + processoRemovido.getTamanho()
-				+ " removido | Espaço livre.");
-		exibirMemoria();
+			Memoria.processosAlocados.set(index, processoRemovido);
+			Memoria.tamanho += processoRemovido.getTamanho();
+			System.err.println("\nINFO: Processo " + "id: " + processoRemovido.getIdProcesso()
+					+ " | tamanho: " + processoRemovido.getTamanho()
+					+ " removido | Espaço livre.\n");
+			exibirMemoria();
+		}
 	}
 
 	public synchronized static void exibirMemoria() {

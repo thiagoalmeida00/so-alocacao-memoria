@@ -44,7 +44,7 @@ public class GeradorDeProcessosFF {
 			e.printStackTrace();
 		}
 
-		/* Agendar a execução do método desalocarProcesso() a cada 2 segundos */
+		/* Agendar a execução do método desalocarProcesso() a cada 1,5 segundos */
 		executorFluxoDesalocacao.scheduleAtFixedRate(() -> FirstFit.desalocarProcesso(), 0, 1500, TimeUnit.MILLISECONDS);
 
 		try {

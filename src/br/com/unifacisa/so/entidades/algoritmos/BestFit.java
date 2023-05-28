@@ -21,7 +21,7 @@ public class BestFit {
 	static final int ESPACO_TOTAL_MEMORIA = 1000;
 
 	public synchronized static void alocarProcesso() {
-		System.out.println("INFO: Iniciando alocação.");
+		System.out.println("\nINFO: Iniciando alocação.");
 
 		if (GeradorDeProcessosBF.listaProcessosGerados.isEmpty()) {
 			System.out.println("ALERTA: Ainda não existem processos gerados.");
@@ -99,7 +99,6 @@ public class BestFit {
 	}
 
 	public synchronized static void desalocarProcesso() {
-		System.out.println("INFO: Iniciando desalocação.");
 
 		if (Memoria.processosAlocados.isEmpty()) {
 			System.out.println("ALERTA: Não há processos alocados para remover.");
@@ -112,18 +111,23 @@ public class BestFit {
 		if(Memoria.processosAlocados.get(index).isLivre()){
 			index = random.nextInt(Memoria.processosAlocados.size());
 		}
+
 		Processo processoRemovido = new Processo(Memoria.processosAlocados.get(index).getIdProcesso(),
 				Memoria.processosAlocados.get(index).getTamanho(),
 				Memoria.processosAlocados.get(index).getStatusProcesso());
 
-		processoRemovido.setStatusProcesso(StatusEspacoEnum.LIVRE);
+		if (StatusEspacoEnum.OCUPADO.equals(processoRemovido.getStatusProcesso())) {
+				System.out.println("\nINFO: Iniciando desalocação.");
+			
+			processoRemovido.setStatusProcesso(StatusEspacoEnum.LIVRE);
 
-		Memoria.processosAlocados.set(index, processoRemovido);
-		Memoria.tamanho += processoRemovido.getTamanho();
-		System.err.println("INFO: Processo " + "id: " + processoRemovido.getIdProcesso()
-				+ " | tamanho: " + processoRemovido.getTamanho()
-				+ " removido | Espaço livre.");
-		exibirMemoria();
+			Memoria.processosAlocados.set(index, processoRemovido);
+			Memoria.tamanho += processoRemovido.getTamanho();
+			System.err.println("\nINFO: Processo " + "id: " + processoRemovido.getIdProcesso()
+					+ " | tamanho: " + processoRemovido.getTamanho()
+					+ " removido | Espaço livre.\n");
+			exibirMemoria();
+		}
 	}
 
 	public synchronized static void exibirMemoria() {
@@ -136,7 +140,7 @@ public class BestFit {
 			DecimalFormat df = new DecimalFormat("#.##", symbols);
 
 			double memoria = Double.parseDouble(df.format(((double)Memoria.getTamanho() / ESPACO_TOTAL_MEMORIA) * 100));
-			System.out.println("Espaço Livre da Memória: "+ memoria + "% | ");
+			System.out.println("\nEspaço Livre da Memória: "+ memoria + "% | ");
 			for (Processo processo : Memoria.processosAlocados) {
 
 				String status = processo.isLivre() ? "L" : "O";
