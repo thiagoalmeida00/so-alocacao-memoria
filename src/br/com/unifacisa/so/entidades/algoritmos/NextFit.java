@@ -34,14 +34,12 @@ public class NextFit {
 		if (!Memoria.processosAlocados.isEmpty() && (Memoria.getTamanho() - processo.getTamanho()) >= 0) {
 			
 			int posicao = 0;
-			int i = 0;
 			
 			for (Processo espaco : Memoria.processosAlocados) {
 
-				for (i = ultimaPosicaoAlocado; i <= Memoria.processosAlocados.size(); i++) {
-				
+				if (ultimaPosicaoAlocado < posicao - 1) {
 					if (espaco.isLivre() && espaco.getTamanho() >= processo.getTamanho() && posicao <= 1000) {
-						
+
 						processo.setStatusProcesso(StatusEspacoEnum.OCUPADO);
 						espaco.setTamanho(espaco.getTamanho()-processo.getTamanho());
 						
