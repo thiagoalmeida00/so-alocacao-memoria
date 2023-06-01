@@ -14,10 +14,7 @@ package br.com.unifacisa.so.aplicacao;
 
 import java.util.Scanner;
 
-import br.com.unifacisa.so.entidades.algoritmos.BestFit;
-import br.com.unifacisa.so.entidades.algoritmos.FirstFit;
-import br.com.unifacisa.so.entidades.algoritmos.NextFit;
-import br.com.unifacisa.so.entidades.algoritmos.WorstFit;
+import br.com.unifacisa.so.entidades.algoritmos.*;
 
 public class Aplicacao {
 
@@ -32,7 +29,8 @@ public class Aplicacao {
 			System.out.println("2 - Algoritmo: Alocação Next Fit");
 			System.out.println("3 - Algoritmo: Alocação Best Fit");
 			System.out.println("4 - Algoritmo: Alocação Worst Fit");
-			System.out.println("5 - Sair");
+			System.out.println("5 - Obter Métricas De Todos os Algoritimos");
+			System.out.println("6 - Sair");
 
 			System.out.println("Digite a opcao: ");
 			opcao = scanner.nextLine();
@@ -57,8 +55,12 @@ public class Aplicacao {
 				System.out.println("Opcao escolhida: Alocação Worst Fit...\n");
 				WorstFit.executar();
 				break;
-
 			case "5":
+				System.out.println("Opcao escolhida: Obter Métricas...\n");
+				AllAlgoritms.executarTodos();
+				break;
+
+			case "6":
 				System.out.println("Encerrando o programa...");
 				break;
 
@@ -66,7 +68,7 @@ public class Aplicacao {
 				System.out.println("Opcao invalida. Digite novamente.");
 			}
 
-		} while (!opcao.equals("5"));
+		} while (!opcao.equals("6"));
 		scanner.close();
 
 	}

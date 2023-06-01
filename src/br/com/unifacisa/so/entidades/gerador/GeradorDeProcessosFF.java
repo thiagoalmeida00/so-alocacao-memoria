@@ -30,6 +30,7 @@ public class GeradorDeProcessosFF {
 		/* Agendar a execução do método gerarProcesso() a cada meio segundo */
 		executor.scheduleAtFixedRate(this::gerarProcesso, 0, 500, TimeUnit.MILLISECONDS);
 
+		//ESPERA 1 SEGUNDO PARA COMECAR A ALOCAR PROCESSOS
 		try {
 	        Thread.sleep(1000);
 	    } catch (InterruptedException e) {
@@ -38,13 +39,14 @@ public class GeradorDeProcessosFF {
 		/* Agendar a execução do método alocarProcesso() a cada 1 segundos */
 		executorFluxoAlocacao.scheduleAtFixedRate(() -> FirstFit.alocarProcesso(), 0, 1, TimeUnit.SECONDS);
 
+		//ESPERA 5.5 SEGUNDOS PARA COMECAR A DESALOCAR PROCESSOS
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(5500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		/* Agendar a execução do método desalocarProcesso() a cada 1,5 segundos */
+		/* Agendar a execução do método desalocarProcesso() a cada 1.5 segundos */
 		executorFluxoDesalocacao.scheduleAtFixedRate(() -> FirstFit.desalocarProcesso(), 0, 1500, TimeUnit.MILLISECONDS);
 
 		try {
@@ -53,7 +55,7 @@ public class GeradorDeProcessosFF {
 			e.printStackTrace();
 		}
 		
-		/* Encerrar os executores após 1 minuto */
+		/* Encerrar os executores após 50 segundos */
 		executor.shutdown();
 		executorFluxoAlocacao.shutdown();
 		executorFluxoDesalocacao.shutdown();

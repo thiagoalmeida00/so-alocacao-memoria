@@ -20,6 +20,10 @@ public class WorstFit {
 
 	static final int ESPACO_TOTAL_MEMORIA = 1000;
 
+	public static Double tamanhoMedioProcessosWorst;
+	public static Double ocupacaoMediaMemoriaWorst;
+	public static Double taxaDescarteWorst;
+
 	public synchronized static void alocarProcesso() {
 		System.out.println("INFO: Iniciando alocação.");
 
@@ -106,7 +110,7 @@ public class WorstFit {
 	public synchronized static void desalocarProcesso() {
 
 		if (Memoria.processosAlocados.isEmpty()) {
-			System.out.println("ALERTA: Não há processos alocados para remover.");
+			System.err.println("ALERTA: Não há processos alocados para remover.");
 			return;
 		}
 
@@ -118,7 +122,7 @@ public class WorstFit {
 				Memoria.processosAlocados.get(index).getStatusProcesso());
 
 		if (StatusEspacoEnum.OCUPADO.equals(processoRemovido.getStatusProcesso())) {
-			System.out.println("INFO: Iniciando desalocação.");
+			System.err.println("INFO: Iniciando desalocação.");
 			
 			processoRemovido.setStatusProcesso(StatusEspacoEnum.LIVRE);
 
@@ -198,21 +202,21 @@ public class WorstFit {
 	public static void executar() {
 		new GeradorDeProcessosWF();
 
-		Double tamanhoMedioProcessos = (double) somaTotalDeTodosProcessos / totalProcessosGerados;
-		Double ocupacaoMediaMemoria =  ((double)(totalEspacoLivre / (totalProcessosAlocados * ESPACO_TOTAL_MEMORIA)) * 100);
-		Double taxaDescarte = (double) totalProcessosDescartados / totalProcessosGerados * 100;
+		tamanhoMedioProcessosWorst = (double) somaTotalDeTodosProcessos / totalProcessosGerados;
+		ocupacaoMediaMemoriaWorst =  ((double)(totalEspacoLivre / (totalProcessosAlocados * ESPACO_TOTAL_MEMORIA)) * 100);
+		taxaDescarteWorst = (double) totalProcessosDescartados / totalProcessosGerados * 100;
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
 		symbols.setDecimalSeparator('.');
 		DecimalFormat df = new DecimalFormat("#.##", symbols);
 
-		tamanhoMedioProcessos = Double.parseDouble(df.format(tamanhoMedioProcessos));
-		ocupacaoMediaMemoria = Double.parseDouble(df.format(ocupacaoMediaMemoria));
-		taxaDescarte = Double.parseDouble(df.format(taxaDescarte));
+		tamanhoMedioProcessosWorst = Double.parseDouble(df.format(tamanhoMedioProcessosWorst));
+		ocupacaoMediaMemoriaWorst = Double.parseDouble(df.format(ocupacaoMediaMemoriaWorst));
+		taxaDescarteWorst = Double.parseDouble(df.format(taxaDescarteWorst));
 
 		System.out.println("\nResultados do Worst Fit:");
-		System.out.println("Tamanho médio dos processos gerados: " + tamanhoMedioProcessos);
-		System.out.println("Ocupação média da memória por segundo: " + ocupacaoMediaMemoria + "%");
-		System.out.println("Taxa de descarte: " + taxaDescarte + "%");
+		System.out.println("Tamanho médio dos processos gerados: " + tamanhoMedioProcessosWorst);
+		System.out.println("Ocupação média da memória por segundo: " + ocupacaoMediaMemoriaWorst + "%");
+		System.out.println("Taxa de descarte: " + taxaDescarteWorst + "%");
 	}
 	
 }
